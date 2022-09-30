@@ -79,19 +79,9 @@ def hamming_distance(state1: QSystemState, state2: QSystemState):
 
 
 def transition_energy(state1: QSystemState, state2: QSystemState) -> np.cdouble:
-    #if hamming_distance(state1, state2) > 3:
-    #    return 0
     global h_planc
     global w_omega
     global g_const
-
-    #if abs(state1.ph_spin_down - state2.ph_spin_down) > 1 or \
-    #        abs(state1.ph_spin_up - state2.ph_spin_up) > 1 or \
-    #        abs(state1.el_f0_spin_down_cnt - state2.el_f0_spin_down_cnt) > 1 or \
-    #        abs(state1.el_f0_spin_up_cnt - state2.el_f0_spin_up_cnt) > 1 or \
-    #        abs(state1.el_f1_spin_down_cnt - state2.el_f1_spin_down_cnt) > 1 or \
-    #        abs(state1.el_f1_spin_up_cnt - state2.el_f1_spin_up_cnt) > 1:
-    #    return 0
 
     if state1 == state2:
         # nothing changed
@@ -171,7 +161,6 @@ latest_quantum_state_copy = np.copy(latest_quantum_state)
 eigenvalues_array, eigenvectors_array = LA.eig(matrix)
 lambdas_list = []
 for i in range(len(eigenvalues_array)):
-    #eigenvectors_array[:,i] = eigenvectors_array[:,i] / np.linalg.norm(np.abs(eigenvectors_array[:,i]))
     lambdas_list.append(eigenvectors_array[:,i].dot(latest_quantum_state[:,0]))
 
 cur_t = 0
@@ -182,7 +171,7 @@ exact_solution_list = []
 latest_percent_done = -1
 while cur_t < t_max:
     # approx solution
-    latest_quantum_state = (np.identity(n).astype(np.cdouble) - ((1j * t_delta / h_planc) * matrix) + ((1j * t_delta / h_planc / 2) * np.sqaure(matrix))).dot(latest_quantum_state)
+    latest_quantum_state = (np.identity(n).astype(np.cdouble) - ((1j * t_delta / h_planc) * matrix)).dot(latest_quantum_state)
     cur_vector_modulus = np.linalg.norm(np.abs(latest_quantum_state[:,0]))
     latest_quantum_state = latest_quantum_state / cur_vector_modulus
     approx_probability = get_probability(latest_quantum_state, gives_moleculo_filter)
